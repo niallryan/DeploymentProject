@@ -84,49 +84,49 @@ else
 	echo "testdb.pl is not present!"
 fi
 
-# tar it back up
-tar -zcvf webpackage_preIntegrate.tgz DeploymentWebApp
+# # tar it back up
+# tar -zcvf webpackage_preIntegrate.tgz DeploymentWebApp
 
-# set ERRORCHECK if any errors
+# # set ERRORCHECK if any errors
 
-# move webpackage to Integrate dir and clean up
-mv webpackage_preIntegrate.tgz ../integrate
-rm -rf DeploymentWebApp
+# # move webpackage to Integrate dir and clean up
+# mv webpackage_preIntegrate.tgz ../integrate
+# rm -rf DeploymentWebApp
 
-# untar
-cd ../integrate
-tar -zxvf webpackage_preIntegrate.tgz
+# # untar
+# cd ../integrate
+# tar -zxvf webpackage_preIntegrate.tgz
 
-# perform integrate/manipulation functions
+# # perform integrate/manipulation functions
 
-# tar it back up
-tar -zcvf webpackage_preTest.tgz DeploymentWebApp
+# # tar it back up
+# tar -zcvf webpackage_preTest.tgz DeploymentWebApp
 
-# set ERRORCHECK if any errors
+# # set ERRORCHECK if any errors
 
-# move to test dir and clean up
-mv webpackage_preTest.tgz ../test
-rm -rf DeploymentWebApp
+# # move to test dir and clean up
+# mv webpackage_preTest.tgz ../test
+# rm -rf DeploymentWebApp
 
-# untar
-cd ../test
-tar -zxvf webpackage_preTest.tgz
+# # untar
+# cd ../test
+# tar -zxvf webpackage_preTest.tgz
 
-# perform test/manipulation functions
+# # perform test/manipulation functions
 
-# tar it back up
-tar -zcvf webpackage_preDeploy.tgz DeploymentWebApp
+# # tar it back up
+# tar -zcvf webpackage_preDeploy.tgz DeploymentWebApp
 
-# set ERRORCHECK if any errors
+# # set ERRORCHECK if any errors
 
-# check that ERRORCHECK is not 0
-if [ $ERRORCHECK -eq 0 ]
-then
-	# move webpackage + deployment script to AWS server
+# # check that ERRORCHECK is not 0
+# if [ $ERRORCHECK -eq 0 ]
+# then
+# 	# move webpackage + deployment script to AWS server
 
-	# untar file
+# 	# untar file
 
-	# perform deployment
+# 	# perform deployment
 
-	echo Doing Deployment
-fi
+# 	echo Doing Deployment
+# fi
