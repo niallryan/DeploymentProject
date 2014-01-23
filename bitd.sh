@@ -84,10 +84,13 @@ else
 	echo "testdb.pl is not present!"
 fi
 
-# # tar it back up
+# integrate static html content from 2 or more files into 1
+cat DeploymentWebApp/www/content.html DeploymentWebApp/www/image.html > DeploymentWebApp/www/index.html
+
+# tar it back up
 # tar -zcvf webpackage_preIntegrate.tgz DeploymentWebApp
 
-# # set ERRORCHECK if any errors
+# set ERRORCHECK if any errors
 
 # # move webpackage to Integrate dir and clean up
 # mv webpackage_preIntegrate.tgz ../integrate
