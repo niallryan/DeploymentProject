@@ -55,29 +55,29 @@ tar -zxvf webpackage_preBuild.tgz
 
 # perform build/manipulation functions
 # test form.html, accept_form.pl, hello_world.pl, testdb.pl exist
-FORM="/DeploymentWebApp/form.html"
+FORM="DeploymentWebApp/www/form.html"
 if [ -e "$FORM" ]
 then
 	echo "form.html exists!"
 else
-	echo form.html is not present!
+	echo "form.html is not present!"
 fi
 
-ACCEPT_FORM="/DeploymentWebApp/accept_form.pl"
+ACCEPT_FORM="DeploymentWebApp/cgi-bin/accept_form.pl"
 if [ -e "$ACCEPT_FORM" ]; then
 	echo "accept_form.pl exists!"
 else
 	echo "accept_form.pl is not present!"
 fi
 
-HELLO="/DeploymentWebApp/hello_world.pl"
+HELLO="DeploymentWebApp/cgi-bin/hello_world.pl"
 if [ -e "$HELLO" ]; then
 	echo "hello_world.pl exists!"
 else
 	echo "hello_world.pl is not present!"
 fi
 
-TESTDB="/DeploymentWebApp/testdb.pl"
+TESTDB="DeploymentWebApp/cgi-bin/testdb.pl"
 if [ -e "$TESTDB" ]; then
 	echo "testdb.pl exists!"
 else
