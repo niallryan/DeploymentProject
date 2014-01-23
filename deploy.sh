@@ -1,65 +1,72 @@
-#!/usr/bin/bash
+#!/bin/bash
 
-SANDBOX=sandbox_$RANDOM
-echo USING SANDBOX $SANDBOX
+# deploying to AWS server not possible due to errors installing Perl CGI handlers
+# 
+# deploying to different VirtualBox environment instead
 
-# stop apache
-service apache2 stop
+# copy webpackage over
+# scp webpackage_preDeploy.tgz testuser@whateveripaddress:~
 
-# stop mysql
-service mysql stop
+# copy monitoring script over
 
-# remove current version of apache
-apt-get -q -y remove apache2
+# ssh into environment
+# ssh testuser@whateveripaddress "'
 
-# remove current version of mysql
-apt-get -q -y remove mysql-client mysql-server
-echo mysql-server mysql-server/root_password password password | debconf-set-selections
-echo mysql-server mysql-server/root_password_again password password | debconf-set-selections
-
-# refresh apt-get package repository
-apt-get update
-
-# clean reinstall of apache
-apt-get -q -y install apache2
-
-# clean reinstall of mysql
-apt-get -q -y install mysql-client mysql-server
-
-# create sandbox for web app
+# create sandbox
 cd /tmp
 mkdir $SANDBOX
 cd $SANDBOX
 
-# get web app from Git repo, put in sandbox
-git clone https://github.com/niallryan/DeploymentWebApp.git
+# test resources
+# check memory
+# free, vmstat, top
 
-# move web app files to /cgi-bin and /www
-cd DeploymentWebApp
-cp www/* /var/www/
-cp cgi-bin/* /usr/lib/cgi-bin/
-chmod a+x /usr/lib/cgi-bin/*
+# check disk
+# df -h
 
-# start apache
-service apache2 start
+# check network
+# iostat, iotop, netstat
 
-# start mysql
-service mysql start
+# clean environment ie un- and re-install apache and mysql
+# stop services
+service apache2 stop
+service mysql stop
 
-# configure mysql
-cat <<FINISH | mysql -uroot -ppassword
-drop database if exists dbtest;
-CREATE DATABASE dbtest;
-GRANT ALL PRIVILEGES ON dbtest.* TO dbtestuser@localhost IDENTIFIED BY 'dbpassword';
-use dbtest;
-drop table if exists custdetails;
-create table if not exists custdetails ( name VARCHAR(30) NOT NULL DEFAULT '', address VARCHAR(30) NOT NULL DEFAULT '' );
-insert into custdetails (name,address) values ('Nicky Cahill', 'Carlow');
-select * from custdetails;
-FINISH
+# uninstall
+apt-get -q -y remove apache2
+apt-get -q -y remove mysql-client mysql-server
+echo mysql-server mysql-server/root_password password password | debconf-set-selections
+echo mysql-server mysql-server/root_password_again password password Z debconf-set-selections
 
-# remove sandbox
-cd /tmp
-rm -rf $SANDBOX
+# update apt repo
+apt-get update
 
-# check web app installed right
+# reinstall
+apt-get -q -y install apache2
+apt-get -q -y install mysql-client mysql-server
+
+# untar app
+tar -zcxf webpackage_preDeploy.tgz DeploymentWebApp
+
+# move components to /www and /cgi-bin
+cp DeploymentWebApp/www/* /var/www
+cp DeploymentWebApp/cgi-bin/* /etc/cgi-bin/
+
+# test necessary files are in place
+DEPINDEX="/var/www/index.html"
+DEPAFPL="/etc/cgi-bin/accept_form.pl"
+DEPHW="/etc/cgi-bin/hello_world.pl"
+DEPTDB="etc/cgi-bin/testdb.pl"
+if [ -e "$DEPINDEX" ] && [ -e "$DEPAFPL" ] && [ -e "$DEPHW" ] && [ -e "$DEPTDB" ]
+then
+	echo "All files in place"
+else
+	echo "Files not in place, exiting..."
+	exit
+fi
+
+# configure crontab to run monitoring script
+# modified from http://stackoverflow.com/questions/610839/how-can-i-programatically-create-a-new-cron-job
+# configure crontab, make sure new cron job is unique
+
+(crontab -l ; echo "* * * * * ~/logmon.sh") | uniq - | crontab -
