@@ -1,18 +1,7 @@
 #!/bin/bash
 
-# deploying to AWS server not possible due to errors installing Perl CGI handlers
-# 
-# deploying to different VirtualBox environment instead
-
-# copy webpackage over
-# scp webpackage_preDeploy.tgz testuser@whateveripaddress:~
-
-# copy monitoring script over
-
-# ssh into environment
-# ssh testuser@whateveripaddress "'
-
 # create sandbox
+SANDBOX=sandbox_$RANDOM
 cd /tmp
 mkdir $SANDBOX
 cd $SANDBOX
@@ -45,12 +34,16 @@ apt-get update
 apt-get -q -y install apache2
 apt-get -q -y install mysql-client mysql-server
 
+# restart services
+service apache2 start
+service mysql start
+
 # untar app
 tar -zcxf webpackage_preDeploy.tgz DeploymentWebApp
 
 # move components to /www and /cgi-bin
-cp DeploymentWebApp/www/* /var/www
-cp DeploymentWebApp/cgi-bin/* /etc/cgi-bin/
+cp ~/DeploymentWebApp/www/* /var/www
+cp ~/DeploymentWebApp/cgi-bin/* /etc/cgi-bin/
 
 # test necessary files are in place
 DEPINDEX="/var/www/index.html"

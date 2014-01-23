@@ -201,14 +201,15 @@ if [ $ERRORCHECK -eq 0 ]
 then
 	# backup content
 	# mysqldump > db_backup
-	# scp db_backup testuser@whatever_BID_server_ip_is
+	# scp db_backup testuser@whatever_backup_server_ip_is
 
-	# move webpackage + monitoring script to deployment server
-	
+	# move webpackage + scripts to deployment server
 	scp -i ~/keypair1.pem webpackage_preDeploy.tgz ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
+	scp -i ~/keypair1.pem ~/DeploymentProject/logmon.sh ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
+	scp -i ~/keypair1.pem ~/DeploymentProject/deploy.sh ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
 	#
 	# ssh into AWS instance
-	ssh -t -i ~/keypair1.pem ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com bash deploy.sh
+	ssh -i ~/keypair1.pem ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com 'sudo bash deploy.sh'
 	
 	echo "Deployment completed successfully."
 else
