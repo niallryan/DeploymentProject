@@ -1,34 +1,42 @@
 #!/bin/bash
-ADMINISTRATOR=pie314@eircom.net
+
+# set ADMIN and MAILSERVER vars for mail script
+ADMINISTRATOR=carolineryan57@eircom.net
 MAILSERVER=mail1.eircom.net
 
 # Level 1 Functions
 
+# check if apache is running
 function isApacheRunning {
 	isRunning apache2
 	return $?
 }
 
+# check is apache is listening
 function isApacheListening {
 	isTCPlisten 80
 	return $?
 }
 
+# check if mysql is listening
 function isMysqlListening {
 	isTCPlisten 3306
 	return $?
 }
 
+# check if apache remote is up
 function isApacheRemoteUp {
 	isTCPremoteOpen 127.0.0.1 80
 	return $?
 }
 
+# check if mysql is running
 function isMysqlRunning {
 	isRunning mysqld
 	return $?
 }
 
+# check if mysql remote is up
 function isMysqlRemoteUp {
 	isTCPremoteOpen 127.0.0.1 3306
 	return $?
@@ -142,7 +150,7 @@ else
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
-if [ $ERRORCOUNT -gt 0 ]
+if [ $ERRORCOUNT -eq 0 ]
 then
 	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl sendmail.pl $ADMINISTRATOR $MAILSERVER
 fi

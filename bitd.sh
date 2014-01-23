@@ -56,35 +56,32 @@ tar -zxvf webpackage_preBuild.tgz
 # perform build/manipulation functions
 # test form.html, accept_form.pl, hello_world.pl, testdb.pl exist
 FORM="/DeploymentWebApp/form.html"
-if [ -e "$FORM" ]; then
-	echo form.html exists!
+if [ -e "$FORM" ]
+then
+	echo "form.html exists!"
 else
 	echo form.html is not present!
-	ERRORCOUNT=(($ERRORCOUNT+1))
 fi
 
 ACCEPT_FORM="/DeploymentWebApp/accept_form.pl"
 if [ -e "$ACCEPT_FORM" ]; then
-	echo accept_form.pl exists!
+	echo "accept_form.pl exists!"
 else
-	echo accept_form.pl is not present!
-	ERRORCOUNT=(($ERRORCOUNT+1))
+	echo "accept_form.pl is not present!"
 fi
 
 HELLO="/DeploymentWebApp/hello_world.pl"
 if [ -e "$HELLO" ]; then
-	echo hello_world.pl exists!
+	echo "hello_world.pl exists!"
 else
-	echo hello_world.pl is not present!
-	ERRORCOUNT=(($ERRORCOUNT+1))
+	echo "hello_world.pl is not present!"
 fi
 
 TESTDB="/DeploymentWebApp/testdb.pl"
 if [ -e "$TESTDB" ]; then
-	echo testdb.pl exists!
+	echo "testdb.pl exists!"
 else
-	echo testdb.pl is not present!
-	ERRORCOUNT=(($ERRORCOUNT+1))
+	echo "testdb.pl is not present!"
 fi
 
 # tar it back up
