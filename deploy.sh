@@ -1,5 +1,13 @@
 #!/bin/bash
 
+timestamp() {
+	date + "%T"
+}
+
+# log timestamp to file to make errors more identifiable
+mkdir ~/MyLogs
+timestamp >> ~/MyLogs/deploy_log.txt
+
 # create sandbox
 SANDBOX=sandbox_$RANDOM
 cd /tmp
@@ -18,10 +26,12 @@ cd $SANDBOX
 
 # clean environment ie un- and re-install apache and mysql
 # stop services
+echo "Stopping services" >> ~/MyLogs/deploy_log.txt
 service apache2 stop
 service mysql stop
 
 # uninstall
+echo "Uninstalling Apache and mySQL" >> ~/MyLogs/deploy_log.txt
 apt-get -q -y remove apache2
 apt-get -q -y remove mysql-client mysql-server
 echo mysql-server mysql-server/root_password password password | debconf-set-selections
@@ -31,10 +41,12 @@ echo mysql-server mysql-server/root_password_again password password Z debconf-s
 apt-get update
 
 # reinstall
+echo "Reinstalling Apache and mySQL" >> ~/MyLogs/deploy_log.txt
 apt-get -q -y install apache2
 apt-get -q -y install mysql-client mysql-server
 
 # restart services
+echo "Restarting services" >> ~/MyLogs/deploy_log.txt
 service apache2 start
 service mysql start
 
@@ -57,14 +69,15 @@ DEPHW="/usr/lib/cgi-bin/hello_world.pl"
 DEPTDB="/usr/lib/cgi-bin/testdb.pl"
 if [ -e "$DEPINDEX" ] && [ -e "$DEPAFPL" ] && [ -e "$DEPHW" ] && [ -e "$DEPTDB" ]
 then
-	echo "All files in place"
+	echo "All files in place" >> ~/MyLogs/deploy_log.txt
 else
-	echo "Files not in place, exiting..."
+	echo "Files not in place, exiting..." >> ~/MyLogs/deploy_log.txt
 	exit
 fi
 
 # configure crontab to run monitoring script
 # modified from http://stackoverflow.com/questions/610839/how-can-i-programatically-create-a-new-cron-job
 # configure crontab, make sure new cron job is unique
-
+echo "Setting up monitoring Cron job" >> ~/MyLogs/deploy_log.txt
 (crontab -l ; echo "* * * * * ~/logmon.sh") | uniq - | crontab -
+echo "Done" >> ~/MyLogs/deploy_log.txt

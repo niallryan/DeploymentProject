@@ -6,7 +6,7 @@ timestamp() {
 }
 
 # append timestamp to log file so each set of log messages is identifiable
-echo timestamp >> ~/DeploymentProject/log.txt
+timestamp >> ~/DeploymentProject/log.txt
 
 # change into tmp directory
 cd /tmp
@@ -111,10 +111,12 @@ fi
 
 # clean environment (uninstall + reinstall apache + mysql)
 # stop services
+echo "Stopping services" >> ~/DeploymentProject/log.txt
 service apache2 stop
 service mysql stop
 
 # uninstall
+echo "Uninstalling Apache and mySQL" >> ~/DeploymentProject/log.txt
 apt-get -q -y remove apache2
 apt-get -q -y remove mysql-client mysql-server
 echo mysql-server mysql-server/root_password password password | debconf-set-selections
@@ -124,10 +126,12 @@ echo mysql-server mysql-server/root_password_again password password | debconf-s
 apt-get update
 
 # reinstall
+echo "Reinstalling Apache and mySQL" >> ~/DeploymentProject/log.txt
 apt-get install apache2
 apt-get install mysql-client mysql-server
 
 # restart apache and mysql
+echo "Starting services" >> ~/DeploymentProject/log.txt
 service apache2 start
 service mysql start
 
@@ -135,6 +139,7 @@ service mysql start
 tar -zcvf webpackage_preIntegrate.tgz DeploymentWebApp
 
 # # move webpackage to Integrate dir and clean up
+echo "Moving to Integration phase" >> ~/DeploymentProject/log.txt
 mv webpackage_preIntegrate.tgz ../integrate
 rm -rf DeploymentWebApp
 
@@ -164,9 +169,9 @@ TDB="/usr/lib/cgi-bin/testdb.pl"
 
 if [ -e "$IND" ] && [ -e "$FORM" ] && [ -e "$AFPL" ] && [ -e "$HW" ] && [ -e "$TDB" ]
 then
-	echo "HTML and Perl files in place"
+	echo "HTML and Perl files in place" >> ~/DeploymentProject/log.txt
 else
-	echo "HTML and Perl files NOT in place"
+	echo "HTML and Perl files NOT in place" >> ~/DeploymentProject/log.txt
 	ERRORCHECK=$((ERRORCHECK+1))
 fi
 
@@ -174,6 +179,7 @@ fi
 tar -zcvf webpackage_preTest.tgz DeploymentWebApp
 
 # # move to test dir and clean up
+echo "Moving to Test phase" >> ~/DeploymentProject/log.txt
 mv webpackage_preTest.tgz ../test
 rm -rf DeploymentWebApp
 
@@ -188,7 +194,7 @@ tidy /var/www/*
 # test dynamic content functions as required
 # ie perl script enters data into database
 # configure mysql
-echo "Testing if data added to mysql"
+echo "Testing if data added to mysql" >> ~/DeploymentProject/log.txt
 cat <<FINISH | mysql -uroot -ppassword
 drop database if exists dbtest;
 CREATE DATABASE dbtest;
@@ -209,10 +215,12 @@ tar -zcvf webpackage_preDeploy.tgz DeploymentWebApp
 if [ $ERRORCHECK -eq 0 ]
 then
 	# backup content
+	echo
 	# mysqldump > db_backup
 	# scp -i keypair1.pem db_backup testuser@whatever_backup_server_ip_is
 
 	# move webpackage + scripts to deployment server
+	echo "Moving to Production server" >> ~/DeploymentProject/log.txt
 	scp -i ~/keypair1.pem webpackage_preDeploy.tgz ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
 	scp -i ~/keypair1.pem ~/DeploymentProject/logmon.sh ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
 	scp -i ~/keypair1.pem ~/DeploymentProject/deploy.sh ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
@@ -221,8 +229,8 @@ then
 	# ssh into AWS instance
 	ssh -i ~/keypair1.pem ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com 'sudo bash deploy.sh'
 
-	echo "Deployment completed successfully."
+	echo "Deployment completed successfully." >> ~/DeploymentProject/log.txt
 else
-	echo "Errors in Build, Integration or Test Phase... Check logs... exiting..."
+	echo "Errors in Build, Integration or Test Phase... exiting..." >> ~/DeploymentProject/log.txt
 	exit
 fi
