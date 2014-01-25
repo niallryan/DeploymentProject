@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set ADMIN and MAILSERVER vars for mail script
-ADMINISTRATOR=my_email@eircom.net
+ADMINISTRATOR=pie314@eircom.net
 MAILSERVER=mail1.eircom.net
 
 # Level 1 Functions
@@ -104,55 +104,56 @@ ERRORCOUNT=0
 
 isApacheRunning
 if [ "$?" -eq 1 ]; then
-	echo Apache Process is Running
+	echo Apache Process is Running >> ~/MyLogs/monitor_log.txt
 else
-	echo Apache Process is NOT running >> ~/monitor_log.txt
+	echo Apache Process is NOT running >> ~/MyLogs/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
 isApacheListening
 if [ "$?" -eq 1 ]; then
-	echo Apache is Listening
+	echo Apache is Listening >> ~/MyLogs/monitor_log.txt
 else
-	echo Apache is NOT listening
+	echo Apache is NOT listening >> ~/MyLogs/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
 isApacheRemoteUp
 if [ "$?" -eq 1 ]; then
-	echo Remote Apache TCP port is UP
+	echo Remote Apache TCP port is UP >> ~/MyLogs/monitor_log.txt
 else
-	echo Remote Apache TCP port is DOWN
+	echo Remote Apache TCP port is DOWN >> ~/MyLogs/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
 isMysqlRunning
 if [ "$?" -eq 1 ]; then
-	echo mySQL process is Running
+	echo mySQL process is Running >> ~/MyLogs/monitor_log.txt
 else
-	echo mySQL process is NOT Running
+	echo mySQL process is NOT Running >> ~/MyLogs/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
 isMysqlListening
 if [ "$?" -eq 1 ]; then
-	echo mySQL is listening
+	echo mySQL is listening >> ~/MyLogs/monitor_log.txt
 else
-	echo mySQL is NOT listening
+	echo mySQL is NOT listening >> ~/MyLogs/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
 isMysqlRemoteUp
 if [ "$?" -eq 1 ]; then
-	echo Remote mySQL TCP port is UP
+	echo Remote mySQL TCP port is UP >> ~/MyLogs/monitor_log.txt
 else
-	echo Remote mySQL TCP port is DOWN
+	echo Remote mySQL TCP port is DOWN >> ~/MyLogs/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
 if [ $ERRORCOUNT -gt 0 ]
 then
 	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl sendmail.pl $ADMINISTRATOR $MAILSERVER
+	echo "Something is wrong with the production environment." >> ~/MyLogs/monitor_log.txt
 else
-	echo "Everything is fine" >> ~/monitor_log.txt
+	echo "Everything is fine" >> ~/MyLogs/monitor_log.txt
 fi
