@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# create timestamp
+timestamp() {
+	date + "%T"
+}
+
+# append timestamp to log file so each set of log messages is identifiable
+echo timestamp >> ~/DeploymentProject/log.txt
+
+# change into tmp directory
 cd /tmp
 
 # create sandbox
@@ -41,11 +50,12 @@ echo $MD5SUM > /tmp/md5sum
 # exit cleanly if MD5sum hasn't changed, otherwise proceed
 if [ $FILECHANGE -eq 0 ]
 then
-	echo no change in files, doing nothing and exiting
+	echo no change in files, doing nothing and exiting >> ~/DeploymentProject/log.txt
 	exit
 fi
 
 # move webpackage to build dir
+echo "Moving to build phase" >> ~/DeploymentProject.log.txt
 mv webpackage_preBuild.tgz build
 rm -rf DeploymentWebApp
 
@@ -58,33 +68,33 @@ tar -zxvf webpackage_preBuild.tgz
 FORM="DeploymentWebApp/www/form.html"
 if [ -e "$FORM" ]
 then
-	echo "form.html exists!"
+	echo "form.html exists!" >> ~/DeploymentWebProject/log.txt
 else
-	echo "form.html is not present!"
+	echo "form.html is not present!" >> ~/DeploymentProject/log.txt
 	ERRORCHECK=$((ERRORCHECK+1))
 fi
 
 ACCEPT_FORM="DeploymentWebApp/cgi-bin/accept_form.pl"
 if [ -e "$ACCEPT_FORM" ]; then
-	echo "accept_form.pl exists!"
+	echo "accept_form.pl exists!" >> ~/DeploymentProject/log.txt
 else
-	echo "accept_form.pl is not present!"
+	echo "accept_form.pl is not present!" >> ~/DeploymentProject/log.txt
 	ERRORCHECK=$((ERRORCHECK+1))
 fi
 
 HELLO="DeploymentWebApp/cgi-bin/hello_world.pl"
 if [ -e "$HELLO" ]; then
-	echo "hello_world.pl exists!"
+	echo "hello_world.pl exists!" >> ~/DeploymentProject/log.txt
 else
-	echo "hello_world.pl is not present!"
+	echo "hello_world.pl is not present!" ~/DeploymentProject/log.txt
 	ERRORCHECK=$((ERRORCHECK+1))
 fi
 
 TESTDB="DeploymentWebApp/cgi-bin/testdb.pl"
 if [ -e "$TESTDB" ]; then
-	echo "testdb.pl exists!"
+	echo "testdb.pl exists!" >> ~/DeploymentProject/log.txt
 else
-	echo "testdb.pl is not present!"
+	echo "testdb.pl is not present!" ~/DeploymentProject/log.txt
 	ERRORCHECK=$((ERRORCHECK+1))
 fi
 
@@ -93,9 +103,9 @@ cat DeploymentWebApp/www/content.html DeploymentWebApp/www/image.html > Deployme
 INDEX="DeploymentWebApp/www/index.html"
 if [ -e "$INDEX" ]
 then
-	echo "index.html created successfully"
+	echo "index.html created successfully" >> ~/DeploymentProject/log.txt
 else
-	echo "index.html not created successfully"
+	echo "index.html not created successfully" >> ~/DeploymentProject/log.txt
 	ERRORCHECK=$((ERRORCHECK+1))
 fi
 
@@ -189,7 +199,6 @@ create table if not exists custdetails ( name VARCHAR(30) NOT NULL DEFAULT '', a
 insert into custdetails (name,address) values ('Niall Ryan', 'Rathmines');
 select * from custdetails;
 FINISH
-echo "Data added... Look at the line above"
 
 # add more tests here
 
@@ -201,18 +210,19 @@ if [ $ERRORCHECK -eq 0 ]
 then
 	# backup content
 	# mysqldump > db_backup
-	# scp db_backup testuser@whatever_backup_server_ip_is
+	# scp -i keypair1.pem db_backup testuser@whatever_backup_server_ip_is
 
 	# move webpackage + scripts to deployment server
 	scp -i ~/keypair1.pem webpackage_preDeploy.tgz ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
 	scp -i ~/keypair1.pem ~/DeploymentProject/logmon.sh ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
 	scp -i ~/keypair1.pem ~/DeploymentProject/deploy.sh ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com:~
-	#
+	scp -i ~/keypair1.pem ~/DeploymentProject/sendmail.pl ubuntu@ec2-54-194-110.eu-west-1.compute.amazonaws.com:~
+
 	# ssh into AWS instance
 	ssh -i ~/keypair1.pem ubuntu@ec2-54-194-154-110.eu-west-1.compute.amazonaws.com 'sudo bash deploy.sh'
-	
+
 	echo "Deployment completed successfully."
 else
-	echo "Errors in Build, Integration or Test Phase... exiting..."
+	echo "Errors in Build, Integration or Test Phase... Check logs... exiting..."
 	exit
 fi

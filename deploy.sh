@@ -38,18 +38,23 @@ apt-get -q -y install mysql-client mysql-server
 service apache2 start
 service mysql start
 
+cd ~
+
 # untar app
-tar -zcxf webpackage_preDeploy.tgz DeploymentWebApp
+tar -zxvf webpackage_preDeploy.tgz DeploymentWebApp
 
 # move components to /www and /cgi-bin
 cp ~/DeploymentWebApp/www/* /var/www
-cp ~/DeploymentWebApp/cgi-bin/* /etc/cgi-bin/
+cp ~/DeploymentWebApp/cgi-bin/* /usr/lib/cgi-bin
+
+# make scripts executable
+chmod a+x /usr/lib/cgi-bin/*
 
 # test necessary files are in place
 DEPINDEX="/var/www/index.html"
-DEPAFPL="/etc/cgi-bin/accept_form.pl"
-DEPHW="/etc/cgi-bin/hello_world.pl"
-DEPTDB="etc/cgi-bin/testdb.pl"
+DEPAFPL="/usr/lib/cgi-bin/accept_form.pl"
+DEPHW="/usr/lib/cgi-bin/hello_world.pl"
+DEPTDB="/usr/lib/cgi-bin/testdb.pl"
 if [ -e "$DEPINDEX" ] && [ -e "$DEPAFPL" ] && [ -e "$DEPHW" ] && [ -e "$DEPTDB" ]
 then
 	echo "All files in place"
