@@ -80,5 +80,5 @@ fi
 # modified from http://stackoverflow.com/questions/610839/how-can-i-programatically-create-a-new-cron-job
 # configure crontab, make sure new cron job is unique
 echo "Setting up monitoring Cron job" >> ~/MyLogs/deploy_log.txt
-(crontab -l ; echo "* * * * * ~/logmon.sh") | uniq - | crontab -
+(crontab -l ; echo "15 15 * * * ~/logmon.sh") | uniq - | crontab -
 echo "Done" >> ~/MyLogs/deploy_log.txt

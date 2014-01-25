@@ -4,6 +4,13 @@
 ADMINISTRATOR=pie314@eircom.net
 MAILSERVER=mail1.eircom.net
 
+timestamp() {
+	date +"%T"
+}
+
+# append timestamp to log file so each set of log messages is identifiable
+echo $(timestamp) >> ~/MyLogs/monitor_log.txt
+
 # Level 1 Functions
 
 # check if apache is running
@@ -152,7 +159,7 @@ fi
 
 if [ $ERRORCOUNT -gt 0 ]
 then
-	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl sendmail.pl $ADMINISTRATOR $MAILSERVER
+	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl ~/sendmail.pl $ADMINISTRATOR $MAILSERVER
 	echo "Something is wrong with the production environment." >> ~/MyLogs/monitor_log.txt
 else
 	echo "Everything is fine" >> ~/MyLogs/monitor_log.txt
