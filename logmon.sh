@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set ADMIN and MAILSERVER vars for mail script
-ADMINISTRATOR=carolineryan57@eircom.net
+ADMINISTRATOR=my_email@eircom.net
 MAILSERVER=mail1.eircom.net
 
 # Level 1 Functions
@@ -150,7 +150,7 @@ else
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
-if [ $ERRORCOUNT -eq 0 ]
+if [ $ERRORCOUNT -gt 0 ]
 then
 	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl sendmail.pl $ADMINISTRATOR $MAILSERVER
 fi
