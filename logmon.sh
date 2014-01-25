@@ -106,7 +106,7 @@ isApacheRunning
 if [ "$?" -eq 1 ]; then
 	echo Apache Process is Running
 else
-	echo Apache Process is NOT running
+	echo Apache Process is NOT running >> ~/monitor_log.txt
 	ERRORCOUNT=$((ERRORCOUNT+1))
 fi
 
@@ -154,5 +154,5 @@ if [ $ERRORCOUNT -gt 0 ]
 then
 	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl sendmail.pl $ADMINISTRATOR $MAILSERVER
 else
-	echo "Everything is fine" >> ~/MyLogs/monitoring_log.txt
+	echo "Everything is fine" >> ~/monitor_log.txt
 fi

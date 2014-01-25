@@ -55,7 +55,7 @@ then
 fi
 
 # move webpackage to build dir
-echo "Moving to build phase" >> ~/DeploymentProject.log.txt
+echo "Moving to build phase" >> ~/DeploymentProject/log.txt
 mv webpackage_preBuild.tgz build
 rm -rf DeploymentWebApp
 
