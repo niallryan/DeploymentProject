@@ -153,4 +153,6 @@ fi
 if [ $ERRORCOUNT -gt 0 ]
 then
 	echo "ERROR! ERROR! There is a problem with SOMETHING!" | perl sendmail.pl $ADMINISTRATOR $MAILSERVER
+else
+	echo "Everything is fine" >> ~/MyLogs/monitoring_log.txt
 fi
