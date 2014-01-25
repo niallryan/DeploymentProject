@@ -1,12 +1,12 @@
 #!/bin/bash
 
 timestamp() {
-	date + "%T"
+	date +"%T"
 }
 
 # log timestamp to file to make errors more identifiable
 mkdir ~/MyLogs
-timestamp >> ~/MyLogs/deploy_log.txt
+echo $(timestamp) >> ~/MyLogs/deploy_log.txt
 
 # create sandbox
 SANDBOX=sandbox_$RANDOM
@@ -56,6 +56,7 @@ cd ~
 tar -zxvf webpackage_preDeploy.tgz DeploymentWebApp
 
 # move components to /www and /cgi-bin
+echo "Moving components" >> ~/MyLogs/deploy_log.txt
 cp ~/DeploymentWebApp/www/* /var/www
 cp ~/DeploymentWebApp/cgi-bin/* /usr/lib/cgi-bin
 
