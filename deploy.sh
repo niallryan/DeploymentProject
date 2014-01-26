@@ -5,7 +5,6 @@ timestamp() {
 }
 
 # log timestamp to file to make errors more identifiable
-mkdir ~/MyLogs
 echo $(timestamp) >> ~/MyLogs/deploy_log.txt
 
 # create sandbox
@@ -80,5 +79,9 @@ fi
 # modified from http://stackoverflow.com/questions/610839/how-can-i-programatically-create-a-new-cron-job
 # configure crontab, make sure new cron job is unique
 echo "Setting up monitoring Cron job" >> ~/MyLogs/deploy_log.txt
-(crontab -l ; echo "30 15 * * * sudo bash ~/logmon.sh") | uniq - | crontab -
-echo "Done" >> ~/MyLogs/deploy_log.txt
+(crontab -l ; echo "40 15 * * * bash ~/logmon.sh") | uniq - | crontab -
+
+# run monitoring script because Cron is being annoying and not working
+bash ~/logmon.sh
+
+echo "DONE" >> ~/MyLogs/deploy_log.txt
