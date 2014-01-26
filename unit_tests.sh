@@ -1,5 +1,5 @@
 timestamp() {
-	date +"%T"
+    date +"%T"
 }
 
 # append timestamp to log file so each set of log messages is identifiable

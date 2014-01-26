@@ -215,7 +215,6 @@ tar -zcvf webpackage_preDeploy.tgz DeploymentWebApp
 if [ $ERRORCHECK -eq 0 ]
 then
 	# backup content
-	echo
 	# mysqldump > db_backup
 	# scp -i keypair1.pem db_backup testuser@whatever_backup_server_ip_is
 
